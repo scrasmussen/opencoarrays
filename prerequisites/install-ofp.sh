@@ -59,10 +59,16 @@ export __flag_present=1
 [ -z "${LOG_LEVEL:-}" ] && emergency "Cannot continue without LOG_LEVEL. "
 
 # shellcheck disable=SC2154
-if [[ "${__os}" != "OSX" ]]; then
-   echo "Source translation via OFP is currently supported only on OS X."
-   echo "Please submit an issue at http://github.com/sourceryinstitute/opencoarrays/issues."
-   emergency "${PWD}/install-ofp.sh: Aborting."
+if [[ "${__os}" = "OSX" ]] 
+then
+  strategoxt_superbundle="stratego-superbundle-osx"
+elif [[ "${__os}" = "Linux" ]] 
+then
+  strategoxt_superbundle="stratego-superbundle-linux"
+else
+  echo "Source translation via OFP is currently supported only on OS X and Linux."
+  echo "Please submit an issue at http://github.com/sourceryinstitute/opencoarrays/issues."
+  emergency "${PWD}/install-ofp.sh: Aborting."
 fi
 
 if [[ $(uname) == "Darwin"  ]]; then
@@ -77,7 +83,7 @@ fi
 # Then exit with normal status.
 # shellcheck  disable=SC2154
 if [[ "${arg_D}" == "${__flag_present}" ]]; then
-  echo "strategoxt-superbundle downloader: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -D strategoxt-superbundle)"
+  echo "${strategoxt_superbundle} downloader: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -D ${strategoxt_superbundle})"
   echo "ofp-sdf default downloader: ${default_ofp_downloader}"
   exit 0
 fi
@@ -86,10 +92,10 @@ fi
 # Then exit with normal status.
 # shellcheck disable=SC2154
 install_path="${arg_i}"
-strategoxt_superbundle_install_path=$("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -P strategoxt-superbundle)
+strategoxt_superbundle_install_path=$("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -P ${strategoxt_superbundle})
 # shellcheck disable=SC2154
 if [[ "${arg_P}" == "${__flag_present}" ]]; then
-  echo "strategoxt-superbundle default installation path: ${strategoxt_superbundle_install_path}"
+  echo "${strategoxt_superbundle} default installation path: ${strategoxt_superbundle_install_path}"
   echo "ofp default installation path: ${install_path}"
   exit 0
 fi
@@ -99,7 +105,7 @@ fi
 default_ofp_version=sdf
 # shellcheck disable=SC2154
 if [[ "${arg_V}" == "${__flag_present}" ]]; then
-  echo "strategoxt-superbundle default version: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -V strategoxt-superbundle)"
+  echo "${strategoxt_superbundle} default version: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -V ${strategoxt_superbundle})"
   echo "ofp default version: ${default_ofp_version}"
   exit 0
 fi
@@ -110,7 +116,7 @@ ofp_url_head="https://github.com/sourceryinstitute/opencoarrays/files/213108/"
 ofp_url_tail="ofp-sdf.tar.gz"
 # shellcheck disable=SC2154
 if [[ "${arg_U}" == "${__flag_present}" ]]; then
-  echo "strategoxt-superbundle URL: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -U strategoxt-superbundle)"
+  echo "${strategoxt_superbundle} URL: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -U ${strategoxt_superbundle})"
   echo "ofp URL: ${ofp_url_head}${ofp_url_tail}"
   exit 0
 fi
@@ -158,7 +164,7 @@ if [[ ! -d "${install_path}" ]]; then
 fi
 
 # Install OFP prerequisites to /opt (currently the only option)
-"${opencoarrays_prerequisites_dir}"/install-binary.sh -p strategoxt-superbundle -i "${strategoxt_superbundle_install_path}"
+"${opencoarrays_prerequisites_dir}"/install-binary.sh -p ${strategoxt_superbundle} -i "${strategoxt_superbundle_install_path}"
 
 # Downlaod OFP
 pushd "${install_path}"
