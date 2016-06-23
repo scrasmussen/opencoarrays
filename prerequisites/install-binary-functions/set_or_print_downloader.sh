@@ -20,7 +20,8 @@ set_or_print_downloader()
   # denominator because, for licensing reasons, OS X only has bash 3 by default.)
   # See http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash
   package_fetch=(
-    "strategoxt-superbundle:${wget_or_curl}"
+    "strategoxt-superbundle-osx:${wget_or_curl}"
+    "strategoxt-superbundle-linux:${wget_or_curl}"
   )
   for package in "${package_fetch[@]}" ; do
      KEY="${package%%:*}"

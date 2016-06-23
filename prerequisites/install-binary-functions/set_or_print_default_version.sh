@@ -20,7 +20,8 @@ set_or_print_default_version()
   # denominator because, for licensing reasons, OS X only has bash 3 by default.)
   # See http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash
   package_version=(
-    "strategoxt-superbundle:0.17-macosx"
+    "strategoxt-superbundle-osx:0.17-macosx"
+    "strategoxt-superbundle-linux:0.17-linux"
   )
   for package in "${package_version[@]}" ; do
      KEY="${package%%:*}"

@@ -13,7 +13,8 @@ set_or_print_url()
   package_name="${arg_D:-${arg_p:-${arg_P:-${arg_U:-${arg_V}}}}}"
 
   package_url_head=(
-    "strategoxt-superbundle;https://github.com/sourceryinstitute/opencoarrays/files/212509/"
+    "strategoxt-superbundle-osx;https://github.com/sourceryinstitute/opencoarrays/files/212509/"
+    "strategoxt-superbundle-linux;https://github.com/scrasmussen/euler-enigma/releases/download/0.01/"
   )
   for package in "${package_url_head[@]}" ; do
      KEY="${package%%;*}"
@@ -26,7 +27,8 @@ set_or_print_url()
   done
 
   package_url_tail=(
-    "strategoxt-superbundle;strategoxt-superbundle-${version_to_build}.tar.gz"
+    "strategoxt-superbundle-osx;strategoxt-superbundle-${version_to_build}.tar.gz"
+    "strategoxt-superbundle-linux;strategoxt-superbundle-${version_to_build}.tar.gz"
   )
   for package in "${package_url_tail[@]}" ; do
      KEY="${package%%;*}"
