@@ -61,10 +61,10 @@ export __flag_present=1
 # shellcheck disable=SC2154
 if [[ "${__os}" = "OSX" ]] 
 then
-  strategoxt_superbundle="stratego-superbundle-osx"
+  strategoxt_superbundle="strategoxt-superbundle-osx"
 elif [[ "${__os}" = "Linux" ]] 
 then
-  strategoxt_superbundle="stratego-superbundle-linux"
+  strategoxt_superbundle="strategoxt-superbundle-linux"
 else
   echo "Source translation via OFP is currently supported only on OS X and Linux."
   echo "Please submit an issue at http://github.com/sourceryinstitute/opencoarrays/issues."
@@ -163,8 +163,14 @@ if [[ ! -d "${install_path}" ]]; then
   ${SUDO:-} mkdir -p "${install_path}"
 fi
 
-# Install OFP prerequisites to /opt (currently the only option)
-"${opencoarrays_prerequisites_dir}"/install-binary.sh -p ${strategoxt_superbundle} -i "${strategoxt_superbundle_install_path}"
+if [[ "${__os}" = "OSX" ]] 
+then
+  # Install OFP prerequisites to /opt (currently the only option)
+  "${opencoarrays_prerequisites_dir}"/install-binary.sh -p ${strategoxt_superbundle} -i "${strategoxt_superbundle_install_path}"
+elif [[ "${__os}" = "Linux" ]] 
+then
+  "${opencoarrays_prerequisites_dir}"/install-source.sh -p ${strategoxt_superbundle} -i "${strategoxt_superbundle_install_path}"
+fi
 
 # Downlaod OFP
 pushd "${install_path}"
