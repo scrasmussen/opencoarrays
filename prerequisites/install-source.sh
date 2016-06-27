@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # BASH3 Boilerplate
 #
-# install-source.sh
+# install-binary.sh
 #
 #  - Build OpenCoarrays prerequisite packages and their prerequisites
 #
@@ -104,30 +104,30 @@ info "-U (--print-url):        ${arg_U} "
 info "-v (--version):          ${arg_v} "
 info "-V (--print-version):    ${arg_V} "
 }
-# shellcheck source=./install-source-functions/set_or_print_default_version.sh
-source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-source-functions/set_or_print_default_version.sh"
+# shellcheck source=./install-binary-functions/set_or_print_default_version.sh
+source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-binary-functions/set_or_print_default_version.sh"
 set_or_print_default_version
 export version_to_build="${arg_I:-${default_version}}"
 
-# shellcheck source=./install-source-functions/set_or_print_downloader.sh
-source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-source-functions/set_or_print_downloader.sh"
+# shellcheck source=./install-binary-functions/set_or_print_downloader.sh
+source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-binary-functions/set_or_print_downloader.sh"
 set_or_print_downloader
 
-# shellcheck source=./install-source-functions/set_or_print_url.sh
-source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-source-functions/set_or_print_url.sh"
+# shellcheck source=./install-binary-functions/set_or_print_url.sh
+source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-binary-functions/set_or_print_url.sh"
 set_or_print_url
 
 # shellcheck source=./build-functions/set_or_print_installation_path.sh
 source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/build-functions/set_or_print_installation_path.sh"
-set_or_print_installation_path
+set_or_print_installation_path 
 
 # shellcheck source=./build-functions/download_if_necessary.sh
 source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/build-functions/download_if_necessary.sh"
 download_if_necessary
 
-# shellcheck source=./build-functions/unpack_if_necessary.sh
-source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/build-functions/unpack_if_necessary.sh"
-unpack_if_necessary
+# shellcheck source=./install-source-functions/rm_and_unpack_if_necessary.sh
+source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-source-functions/rm_and_unpack_if_necessary.sh"
+rm_and_unpack_if_necessary
 
 # shellcheck source=./install-binary-functions/set_or_print_csv_binary_names.sh
 source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-binary-functions/set_or_print_csv_binary_names.sh"
@@ -137,6 +137,6 @@ set_or_print_csv_binary_names
 source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/build-functions/set_SUDO_if_needed_to_write_to_directory.sh"
 set_SUDO_if_needed_to_write_to_directory "${arg_i}"
 
-# shellcheck source=./install-binary-functions/move_binaries_to_install_path.sh
-source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-binary-functions/move_binaries_to_install_path.sh"
-move_binaries_to_install_path
+# shellcheck source=./install-source-functions/install_source_package.sh
+source "${OPENCOARRAYS_SRC_DIR:-}/prerequisites/install-source-functions/install_source_package.sh"
+install_source_packages
