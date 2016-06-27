@@ -62,9 +62,11 @@ export __flag_present=1
 if [[ "${__os}" = "OSX" ]] 
 then
   strategoxt_superbundle="strategoxt-superbundle-osx"
+  install_script="install-binary.sh"
 elif [[ "${__os}" = "Linux" ]] 
 then
   strategoxt_superbundle="strategoxt-superbundle-linux"
+  install_script="install-source.sh"
 else
   echo "Source translation via OFP is currently supported only on OS X and Linux."
   echo "Please submit an issue at http://github.com/sourceryinstitute/opencoarrays/issues."
@@ -83,7 +85,7 @@ fi
 # Then exit with normal status.
 # shellcheck  disable=SC2154
 if [[ "${arg_D}" == "${__flag_present}" ]]; then
-  echo "${strategoxt_superbundle} downloader: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -D ${strategoxt_superbundle})"
+  echo "${strategoxt_superbundle} downloader: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/${install_script}" -D ${strategoxt_superbundle})"
   echo "ofp-sdf default downloader: ${default_ofp_downloader}"
   exit 0
 fi
@@ -91,8 +93,8 @@ fi
 # If -P is passed, print the default installation paths for OFP and its prerequisites.
 # Then exit with normal status.
 # shellcheck disable=SC2154
-install_path="${arg_i}"
-strategoxt_superbundle_install_path=$("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -P ${strategoxt_superbundle})
+install_path="/opt"
+strategoxt_superbundle_install_path=$("${OPENCOARRAYS_SRC_DIR}/prerequisites/${install_script}" -P ${strategoxt_superbundle})
 # shellcheck disable=SC2154
 if [[ "${arg_P}" == "${__flag_present}" ]]; then
   echo "${strategoxt_superbundle} default installation path: ${strategoxt_superbundle_install_path}"
@@ -105,7 +107,7 @@ fi
 default_ofp_version=sdf
 # shellcheck disable=SC2154
 if [[ "${arg_V}" == "${__flag_present}" ]]; then
-  echo "${strategoxt_superbundle} default version: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -V ${strategoxt_superbundle})"
+  echo "${strategoxt_superbundle} default version: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/${install_script}" -V ${strategoxt_superbundle})"
   echo "ofp default version: ${default_ofp_version}"
   exit 0
 fi
@@ -116,7 +118,7 @@ ofp_url_head="https://github.com/sourceryinstitute/opencoarrays/files/213108/"
 ofp_url_tail="ofp-sdf.tar.gz"
 # shellcheck disable=SC2154
 if [[ "${arg_U}" == "${__flag_present}" ]]; then
-  echo "${strategoxt_superbundle} URL: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/install-binary.sh" -U ${strategoxt_superbundle})"
+  echo "${strategoxt_superbundle} URL: $("${OPENCOARRAYS_SRC_DIR}/prerequisites/${install_script}" -U ${strategoxt_superbundle})"
   echo "ofp URL: ${ofp_url_head}${ofp_url_tail}"
   exit 0
 fi
@@ -147,14 +149,16 @@ info "-V (--print-version):    ${arg_V}"
 }
 # Set OFP installation path to the value of the -i argument if present.
 # Otherwise, install OFP in the OpenCoarrays prerequisites/installations directory.
+# OSX Binaries currenly only work in /opt directory
 opencoarrays_prerequisites_dir="${OPENCOARRAYS_SRC_DIR}"/prerequisites/
-if [[ "${arg_i}" == "${__flag_present}" ]]; then
-  install_path="${arg_i}"
+if [[ "${__os}" = "OSX" ]]; then
+    install_path="/opt"
+elif [[ "${__os}" = "Linux" ]]; then
+    install_path="${arg_i}"
 else
-  install_path="${opencoarrays_prerequisites_dir}"/installations
+    install_path="${opencoarrays_prerequisites_dir}"/installations
 fi
 
-ofp_prereqs_install_dir="/opt"
 # Change present working directory to installation directory
 if [[ ! -d "${install_path}" ]]; then
   # shellcheck source=./build-functions/set_SUDO_if_needed_to_write_to_directory.sh
@@ -163,14 +167,11 @@ if [[ ! -d "${install_path}" ]]; then
   ${SUDO:-} mkdir -p "${install_path}"
 fi
 
-if [[ "${__os}" = "OSX" ]] 
-then
-  # Install OFP prerequisites to /opt (currently the only option)
-  "${opencoarrays_prerequisites_dir}"/install-binary.sh -p ${strategoxt_superbundle} -i "${strategoxt_superbundle_install_path}"
-elif [[ "${__os}" = "Linux" ]] 
-then
-  "${opencoarrays_prerequisites_dir}"/install-source.sh -p ${strategoxt_superbundle} -i "${strategoxt_superbundle_install_path}"
+# Install OFP prerequisites to /opt if OSX (currently the only option), to install_path if Linux
+if [[ "${__os}" = "Linux" ]]; then
+  strategoxt_superbundle_install_path="${arg_i}"
 fi
+"${opencoarrays_prerequisites_dir}"/${install_script} -p ${strategoxt_superbundle} -i "${strategoxt_superbundle_install_path}"
 
 # Downlaod OFP
 pushd "${install_path}"
@@ -183,9 +184,23 @@ tar xf ofp-sdf.tar.gz
 # Return to the original working directory
 popd
 
-export SDF2_PATH="${ofp_prereqs_install_dir}"/sdf2-bundle/v2.4/bin
-export ST_PATH="${ofp_prereqs_install_dir}"/strategoxt/v0.17/bin
-export DYLD_LIBRARY_PATH="${ofp_prereqs_install_dir}"/strategoxt/v0.17/lib:/opt/aterm/v2.5/lib
+# To define paths based on install location. Different for source and binaries
+if [[ "${__os}" = "OSX" ]]; then
+    sdf2_path_postfix="sdf2-bundle/v2.4/bin"
+    st_path_postfix="strategoxt/v0.17/bin"
+    dyld_path_postfix="strategoxt/v0.17/lib:/opt/aterm/v2.5/lib"
+    ofp_prereqs_install_dir="/opt"
+elif [[ "${__os}" = "Linux" ]]; then
+    linux_superbundle_path="strategoxt-superbundle-linux/0.17-linux"
+    sdf2_path_postfix="${linux_superbundle_path}/sdf2-bundle/bin"
+    st_path_postfix="${linux_superbundle_path}/strategoxt/bin"
+    dyld_path_postfix="${linux_superbundle_path}/strategoxt/lib:${linux_superbundle_path}/aterm/lib"
+
+fi
+
+export SDF2_PATH="${install_path}/${sdf2_path_postfix}"
+export ST_PATH="${install_path}/${st_path_postfix}"
+export DYLD_LIBRARY_PATH="${install_path}/${dyld_path_postfix}"
 
 export OFP_HOME="${install_path}"/ofp-sdf
 # shellcheck source=./install-binary-functions/build_parse_table.sh
