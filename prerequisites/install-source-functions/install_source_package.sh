@@ -5,22 +5,27 @@ install_source_package()
   package_to_install="${3}"
   download_path="${4}"
   CFLAGS="" #"-m32"
-  # install_list="aterm-2.5 sdf2-bundle-2.4 strategoxt-0.17"
-  if [[ $package_to_install = "aterm-2.5" ]]; then
+  if [[ $package_to_install = "aterm-2.6" ]]; then
+      info "+++++INSTALLING ATERM+++++"
       info "./configure --prefix=${install_path}/aterm CFLAGS=${CFLAGS}"
       ./configure --prefix=${install_path}/aterm CFLAGS=${CFLAGS}
       info "make; make install"
       make; make install
-  elif [[ $package_to_install = "sdf2-bundle-2.4" ]]; then
+      info "+++++DONE ATERM+++++"
+  elif [[ $package_to_install = "sdf2-bundle-2.6" ]]; then
+      info "+++++INSTALLING SDF2+++++"
       info "./configure --prefix=${install_path}/sdf2-bundle with-aterm=${install_path}/aterm CFLAGS=${CFLAGS}"
       ./configure --prefix=${install_path}/sdf2-bundle --with-aterm=${install_path}/aterm CFLAGS=${CFLAGS}
       info "make; make install"
       make; make install
+      info "+++++DONE SDF2+++++"
   elif [[ $package_to_install = "strategoxt-0.17" ]]; then
+      info "+++++INSTALLING STRATEGOXT+++++"
       info "./configure --prefix=${install_path}/strategoxt --with-sdf=${install_path}/sdf2-bundle with-aterm=${install_path}/aterm CFLAGS=${CFLAGS}"
       ./configure --prefix=${install_path}/strategoxt --with-sdf=${install_path}/sdf2-bundle --with-aterm=${install_path}/aterm CFLAGS=${CFLAGS}
       info "make; make install"
       make; make install
+      info "+++++DONE STRATEGOXT+++++"
   else
       emergency "Installation from source failed at configure, make ,make install"
   fi
@@ -48,6 +53,7 @@ install_or_skip_source()
     # move to folder to install package
     prerequisites_install_source_dir="${OPENCOARRAYS_SRC_DIR}"/prerequisites/install-source-functions
     info "pushd ${download_path}/${package_to_install}"
+    echo '${package_to_install}'
     pushd "${download_path}/${package_to_install}"
     if [[ -x "../${package_to_install}"  ]]; then
       info "Installation complete for ${package_to_install} in the following location:"
@@ -58,7 +64,7 @@ install_or_skip_source()
       emergency "${install_path}/${package_to_install}"
     fi
     
-    install_list="aterm-2.5 sdf2-bundle-2.4 strategoxt-0.17"
+    install_list="aterm-2.6 sdf2-bundle-2.6 strategoxt-0.17"
     [[ ${install_list} =~ ${package_to_install} ]] && install_source_package "${SUDO:-}" "${install_path}" "${package_to_install}" "${download_path}"
 
     info "popd"
