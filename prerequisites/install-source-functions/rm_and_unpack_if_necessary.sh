@@ -8,7 +8,7 @@ rm_and_unpack_if_necessary()
     info "Unpacking ${url_tail}."
     info "pushd ${download_path}"
     pushd "${download_path}"
-    subpackage_list="aterm-2.5 sdf2-bundle-2.4 strategoxt-0.17"
+    subpackage_list="aterm-2.6 sdf2-bundle-2.6 strategoxt-0.17"
     for subpackage in "${subpackage_list[@]}"
     do
 	info "rm -rf ${subpackage}"
