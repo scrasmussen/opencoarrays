@@ -13,7 +13,7 @@ set_or_print_csv_binary_names()
   # See http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash
   package_install_names=(
     "strategoxt-superbundle-osx:aterm,sdf2-bundle,strategoxt"
-    "strategoxt-superbundle-linux:aterm-2.5,sdf2-bundle-2.4,strategoxt-0.17"
+    "strategoxt-superbundle-linux:aterm-2.6,sdf2-bundle-2.6,strategoxt-0.17"
   )
   for package in "${package_install_names[@]}" ; do
      KEY="${package%%:*}"
